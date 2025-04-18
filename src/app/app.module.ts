@@ -56,8 +56,11 @@ const routes: Routes = [
     MatToolbarModule,
     AuthModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
-    /* StoreRouterConnectingModule.forRoot(),
-    EntityDataModule.forRoot(entityConfig),*/
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router',
+      routerState: RouterState.Minimal
+    }),
+    /* EntityDataModule.forRoot(entityConfig),*/
     EffectsModule.forRoot([]), 
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
   ],
