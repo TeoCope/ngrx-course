@@ -27,12 +27,16 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { entityConfig } from './entity-metadata';
 import { metaReducers, reducers } from "./reducers";
 import { AuthGuard } from "./auth/auth.guard";
+import { CoursesResolver } from "./courses/courses.resolver";
 
 const routes: Routes = [
   {
     path: "courses",
     loadChildren: () =>
       import("./courses/courses.module").then((m) => m.CoursesModule),
+    resolve: {
+      courses: CoursesResolver
+    },
     canActivate: [AuthGuard]
   },
   {
@@ -55,7 +59,15 @@ const routes: Routes = [
     MatListModule,
     MatToolbarModule,
     AuthModule.forRoot(),
-    StoreModule.forRoot(reducers, {metaReducers}),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictStateSerializability: true,
+        strictActionImmutability: true,
+        strictActionSerializability: true
+      }
+    }),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router',
       routerState: RouterState.Minimal
@@ -64,6 +76,6 @@ const routes: Routes = [
     EffectsModule.forRoot([]), 
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
   ],
-  providers: [provideHttpClient(withInterceptorsFromDi())],
+  providers: [provideHttpClient(withInterceptorsFromDi()), CoursesResolver],
 })
 export class AppModule {}
